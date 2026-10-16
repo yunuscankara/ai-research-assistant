@@ -2,7 +2,7 @@
 
 A Retrieval-Augmented Generation (RAG) application that answers questions about PDF documents using semantic search, vector embeddings, and a locally running Large Language Model (LLM).
 
-This project combines document processing, semantic retrieval, and local AI inference to generate answers based on information retrieved from PDF documents.
+The project combines document processing, semantic retrieval, and local AI inference to generate answers based on information retrieved from PDF documents.
 
 ## Features
 
@@ -13,18 +13,18 @@ This project combines document processing, semantic retrieval, and local AI infe
 - Retrieves relevant document sections using semantic search
 - Generates answers using Ollama and Qwen2.5:3b
 - Accepts user questions through an interactive terminal interface
-- Uses retrieved document content to provide context-based answers
+- Uses retrieved document content to generate context-based answers
 - Runs the language model locally through Ollama
 
 ## Tech Stack
 
-- **Language:** Python
+- **Programming Language:** Python
 - **PDF Processing:** PyMuPDF, pypdf
 - **Text Embeddings:** Sentence Transformers
 - **Vector Database:** ChromaDB
 - **LLM Runtime:** Ollama
 - **Language Model:** Qwen2.5:3b
-- **HTTP Requests:** Requests
+- **HTTP Communication:** Requests
 
 ## How It Works
 
@@ -32,8 +32,8 @@ The application follows a basic Retrieval-Augmented Generation (RAG) pipeline.
 
 1. **PDF Text Extraction:** Extracts text from the selected PDF document.
 2. **Text Chunking:** Splits the extracted text into smaller chunks.
-3. **Embedding Generation:** Converts text chunks into numerical vector representations.
-4. **Vector Storage:** Stores the chunks and their embeddings in ChromaDB.
+3. **Embedding Generation:** Converts document chunks into numerical vector representations.
+4. **Vector Storage:** Stores the text chunks and their embeddings in ChromaDB.
 5. **Semantic Search:** Converts the user's question into an embedding and retrieves relevant document chunks.
 6. **Context Preparation:** Combines the retrieved chunks into context for the language model.
 7. **Answer Generation:** Sends the question and retrieved context to the local Qwen2.5:3b model through Ollama.
@@ -60,23 +60,20 @@ ai-research-assistant/
 
 ## Requirements
 
-Before running the application, make sure you have the following installed:
+Before running the application, make sure you have:
 
 - Python 3.10 or later
 - pip
 - Ollama
-- Qwen2.5:3b model
-
-You will also need a PDF document containing extractable text.
+- The Qwen2.5:3b model
+- A PDF document containing extractable text
 
 ## Installation
 
 ### 1. Clone the Repository
 
-Replace the repository URL with the URL of your GitHub repository.
-
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/yunuscankara/ai-research-assistant.git
 cd ai-research-assistant
 ```
 
@@ -93,6 +90,8 @@ source .venv/bin/activate
 ```
 
 ### 3. Install Dependencies
+
+Install the required Python packages:
 
 ```bash
 pip install -r requirements.txt
@@ -114,33 +113,31 @@ Make sure the Ollama service is running before starting the application.
 
 ### 1. Add a PDF Document
 
-Place your PDF file inside the `data/` directory.
+Place your PDF document inside the `data/` directory.
 
-For example:
+The current application expects the following file path:
 
 ```text
 data/sample.pdf
 ```
 
-The current application uses the following PDF path:
+Make sure your PDF file is named `sample.pdf` or update the `pdf_path` variable in `main.py` to match your filename.
 
-```python
-pdf_path = "data/sample.pdf"
-```
-
-If your PDF has a different filename, update the path in `main.py`.
+The application requires a PDF containing extractable text. Scanned documents may require OCR before their text can be processed.
 
 ### 2. Run the Application
 
-Activate your virtual environment and execute:
+Activate your virtual environment and run:
 
 ```bash
 python main.py
 ```
 
+The application will extract the PDF text, split it into chunks, generate embeddings, and store them in ChromaDB before accepting a question.
+
 ### 3. Ask a Question
 
-When prompted, enter a question about the document.
+Enter your question when prompted by the terminal.
 
 Example:
 
@@ -148,7 +145,7 @@ Example:
 Sorunuzu yazın: Sınav kaç sorudan oluşuyor?
 ```
 
-The application will retrieve relevant text chunks and generate an answer based on the retrieved context.
+The application retrieves relevant text chunks from the document and generates an answer using the local language model.
 
 ## Example
 
@@ -164,9 +161,7 @@ Yazılı sınav toplam kaç sorudan oluşuyor ve kaç dakika sürüyor?
 Yazılı sınav toplam 140 sorudan oluşmaktadır ve toplam 160 dakikadır sürecektir.
 ```
 
-The answer is generated using information retrieved from the source PDF.
-
-*Note: This example is based on the PDF used during development. Your results will depend on the document you provide.*
+This example is based on the PDF document used during development. Results depend on the document provided and the relevance of the retrieved text chunks.
 
 ## Configuration
 
@@ -178,7 +173,7 @@ The project uses the following Sentence Transformers model:
 paraphrase-multilingual-MiniLM-L12-v2
 ```
 
-This model generates multilingual text embeddings for semantic search.
+The model generates multilingual text embeddings for semantic search.
 
 ### Language Model
 
@@ -192,7 +187,9 @@ The model runs locally through Ollama.
 
 ### Vector Database
 
-ChromaDB stores the document chunks and their embeddings for similarity-based retrieval.
+ChromaDB stores document chunks and their embeddings for similarity-based retrieval.
+
+The current implementation uses a persistent local ChromaDB database.
 
 ## Current Limitations
 
@@ -200,17 +197,19 @@ ChromaDB stores the document chunks and their embeddings for similarity-based re
 - Text chunking is based on character length.
 - Retrieval quality depends on the embedding model and chunking strategy.
 - Generated answers may be inaccurate or incomplete.
-- Scanned PDFs may require OCR if they do not contain extractable text.
+- Scanned PDFs may require OCR.
 - The current implementation is designed for terminal-based interaction.
+- Document metadata and source page references can be improved.
+- The current vector-store implementation needs improvements before reliably supporting multiple documents.
 
 ## Future Improvements
 
 - Support multiple PDF documents
 - Improve text chunking strategies
 - Store document names and page numbers as metadata
-- Improve retrieval quality through retrieval evaluation
+- Improve retrieval quality through systematic evaluation
+- Add source page references to generated answers
 - Add conversation history
-- Add answer citations and source page references
 - Build a web interface using FastAPI
 - Add automated tests
 - Improve error handling and input validation
@@ -227,13 +226,14 @@ This project provides practical experience with:
 - Local Large Language Models
 - REST API communication
 - Python application structure
+- Integrating an LLM into a Python application
 
 ## Disclaimer
 
-The generated answers depend on the quality of the source document and the relevance of the retrieved text chunks. Always verify important information against the original document.
+The generated answers depend on the quality of the source document and the relevance of the retrieved text chunks. The model may generate inaccurate or incomplete answers. Always verify important information against the original document.
 
 ## Author
 
 **Yunus Cankara**
 
-GitHub: [yunuscankara](https://github.com/yunuscankara)
+GitHub: https://github.com/yunuscankara
