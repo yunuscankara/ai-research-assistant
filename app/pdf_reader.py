@@ -3,29 +3,35 @@ from pathlib import Path
 from pypdf import PdfReader
 
 
-def extract_text_from_pdf(file_path: str) -> str:
-    """Extract text from a PDF file."""
+def extract_pages_from_pdf(file_path: str) -> list[dict]:
+    """Extract text from a PDF while preserving page numbers."""
 
     pdf_path = Path(file_path)
 
-    # Check whether the PDF file exists
     if not pdf_path.exists():
         raise FileNotFoundError(
             f"PDF file not found: {pdf_path.resolve()}"
         )
 
-    # Open the PDF file
     reader = PdfReader(str(pdf_path))
 
     extracted_pages = []
 
-    # Extract text from each page
     for page_number, page in enumerate(reader.pages, start=1):
-        page_text = page.extract_text() or ""
+        page_text = (page.extract_text() or "").strip()
 
-        extracted_pages.append(
-            f"[Page {page_number}]\n{page_text}"
+        if page_text:
+            extracted_pages.append(
+                {
+                    "page_number": page_number,
+                    "text": page_text,
+                }
+            )
+
+    if not extracted_pages:
+        raise ValueError(
+            "No extractable text found in the PDF. "
+            "The document may require OCR."
         )
 
-    # Combine all pages into a single string
-    return "\n\n".join(extracted_pages)
+    return extracted_pages
